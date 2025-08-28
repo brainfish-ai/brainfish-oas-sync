@@ -102,8 +102,8 @@ const uploadToBrainfish = (fileData, apiToken, catalogId, baseUrl = 'https://app
     // Convert string content to Buffer to ensure proper binary handling
     const fileBuffer = Buffer.from(processedContent, 'utf8')
     
-    // Use empty string as field name to match cURL --form =@file behavior
-    form.append('', fileBuffer, {
+    // Try 'file' as field name (most common for file uploads)
+    form.append('file', fileBuffer, {
       filename: processedFileName,
       contentType: 'application/json'
     })

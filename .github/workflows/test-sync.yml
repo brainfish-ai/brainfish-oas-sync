@@ -34,9 +34,8 @@ jobs:
         uses: ./  # Use local action
         with:
           brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
-          catalog_id: '8a2abadd-1140-4f40-921c-e4a30c6a8238'
+          catalog_id: '4971e50a-0bbe-4567-b927-3491cde97731'
           oas_file_path: 'test/api-spec.json'
-          base_url: 'https://app.dev.brainfish.app'
         id: json_sync
         
       - name: Display JSON sync results
@@ -57,9 +56,8 @@ jobs:
         uses: ./  # Use local action
         with:
           brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
-          catalog_id: 'addad784-8e01-4bc3-b37e-b584ea6d24c5'
+          catalog_id: '49cb4f63-1599-43e6-afee-357523c69340'
           oas_file_path: 'test/api-spec.yaml'
-          base_url: 'https://app.dev.brainfish.app'
         id: yaml_sync
         
       - name: Display YAML sync results
@@ -80,9 +78,8 @@ jobs:
         continue-on-error: true
         with:
           brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
-          catalog_id: '8a2abadd-1140-4f40-921c-e4a30c6a8238'
+          catalog_id: '49cb4f63-1599-43e6-afee-357523c69340'
           oas_file_path: 'test/non-existent-file.json'
-          base_url: 'https://app.dev.brainfish.app'
         id: error_test
         
       - name: Verify error was caught
