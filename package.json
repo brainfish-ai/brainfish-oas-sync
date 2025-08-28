@@ -1,0 +1,27 @@
+{
+  "name": "brainfish-oas-sync",
+  "version": "0.0.16",
+  "description": "GitHub Action to sync OpenAPI Specification files from your repository to Brainfish API catalog",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brainfish-ai/brainfish-oas-sync.git"
+  },
+  "author": "ajainvivek",
+  "bugs": {
+    "url": "https://github.com/brainfish-ai/brainfish-oas-sync/issues"
+  },
+  "homepage": "https://github.com/brainfish-ai/brainfish-oas-sync#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/github": "^5.1.1",
+    "js-yaml": "^4.1.0",
+    "form-data": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.36.1"
+  }
+}

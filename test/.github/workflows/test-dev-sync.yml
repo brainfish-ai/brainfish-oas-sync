@@ -1,0 +1,95 @@
+name: Test Brainfish OAS Sync - Dev Environment
+
+on:
+  workflow_dispatch: # Manual trigger for testing
+    inputs:
+      test_file:
+        description: 'Test file to sync (json or yaml)'
+        required: true
+        default: 'both'
+        type: choice
+        options:
+          - 'json'
+          - 'yaml'
+          - 'both'
+  push:
+    branches: [main, develop]
+    paths: 
+      - 'test/api-spec.json'
+      - 'test/api-spec.yaml'
+      - 'index.js'
+      - 'action.yml'
+
+jobs:
+  test-json-sync:
+    if: ${{ github.event.inputs.test_file == 'json' || github.event.inputs.test_file == 'both' || github.event.inputs.test_file == '' }}
+    runs-on: ubuntu-latest
+    name: Test JSON OAS Sync to Dev Environment
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Sync JSON OAS to Brainfish Dev
+        uses: ./  # Use local action
+        with:
+          brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
+          catalog_id: '8a2abadd-1140-4f40-921c-e4a30c6a8238'
+          oas_file_path: 'test/api-spec.json'
+          base_url: 'https://app.dev.brainfish.app'
+        id: json_sync
+        
+      - name: Display JSON sync results
+        run: |
+          echo "Status: ${{ steps.json_sync.outputs.status }}"
+          echo "Uploaded file: ${{ steps.json_sync.outputs.uploaded_file }}"
+
+  test-yaml-sync:
+    if: ${{ github.event.inputs.test_file == 'yaml' || github.event.inputs.test_file == 'both' || github.event.inputs.test_file == '' }}
+    runs-on: ubuntu-latest
+    name: Test YAML OAS Sync to Dev Environment
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Sync YAML OAS to Brainfish Dev
+        uses: ./  # Use local action
+        with:
+          brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
+          catalog_id: 'addad784-8e01-4bc3-b37e-b584ea6d24c5'
+          oas_file_path: 'test/api-spec.yaml'
+          base_url: 'https://app.dev.brainfish.app'
+        id: yaml_sync
+        
+      - name: Display YAML sync results
+        run: |
+          echo "Status: ${{ steps.yaml_sync.outputs.status }}"
+          echo "Uploaded file: ${{ steps.yaml_sync.outputs.uploaded_file }}"
+
+  test-error-handling:
+    runs-on: ubuntu-latest
+    name: Test Error Handling
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Test with non-existent file
+        uses: ./
+        continue-on-error: true
+        with:
+          brainfish_api_token: ${{ secrets.BRAINFISH_DEV_API_TOKEN }}
+          catalog_id: '8a2abadd-1140-4f40-921c-e4a30c6a8238'
+          oas_file_path: 'test/non-existent-file.json'
+          base_url: 'https://app.dev.brainfish.app'
+        id: error_test
+        
+      - name: Verify error was caught
+        run: |
+          if [ "${{ steps.error_test.outcome }}" = "failure" ]; then
+            echo "✅ Error handling test passed - action failed as expected"
+          else
+            echo "❌ Error handling test failed - action should have failed"
+            exit 1
+          fi

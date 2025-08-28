@@ -1,0 +1,36 @@
+name: 'brainfish-oas-sync'
+description: 'A GitHub action to sync OpenAPI Specification files from your repository to Brainfish API catalog.'
+author: 'ajainvivek'
+
+inputs:
+  brainfish_api_token:
+    description: 'Brainfish API token for authentication'
+    required: true
+  catalog_id:
+    description: 'Brainfish catalog ID where the OAS file should be uploaded'
+    required: true
+  oas_file_path:
+    description: 'Path to the OpenAPI Specification file in the repository (supports .yaml, .yml, .json)'
+    required: true
+  base_url:
+    description: 'Base URL for Brainfish API (default: https://app.brainfi.sh, dev: https://app.dev.brainfish.app)'
+    required: false
+    default: 'https://app.brainfi.sh'
+  github_token:
+    description: 'GitHub token (required for private repositories)'
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  status:
+    description: 'The status of the OAS sync operation'
+  uploaded_file:
+    description: 'The name of the file that was uploaded'
+  
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
+
+branding:
+  icon: 'upload-cloud'
+  color: 'blue'

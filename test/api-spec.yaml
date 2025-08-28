@@ -1,0 +1,281 @@
+openapi: 3.0.0
+info:
+  title: Test YAML API
+  description: A sample API specification for testing Brainfish OAS sync (YAML format)
+  version: 1.0.0
+  contact:
+    name: API Support
+    email: support@example.com
+
+servers:
+  - url: https://api.example.com/v1
+    description: Production server
+  - url: https://staging-api.example.com/v1
+    description: Staging server
+
+paths:
+  /products:
+    get:
+      summary: Get all products
+      description: Retrieve a list of all products
+      tags:
+        - Products
+      parameters:
+        - name: limit
+          in: query
+          description: Maximum number of products to return
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: offset
+          in: query
+          description: Number of products to skip
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+                  total:
+                    type: integer
+                    description: Total number of products
+                  limit:
+                    type: integer
+                    description: Maximum number of products returned
+                  offset:
+                    type: integer
+                    description: Number of products skipped
+        '500':
+          description: Internal server error
+
+    post:
+      summary: Create a new product
+      description: Create a new product in the catalog
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductRequest'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+
+  /products/{productId}:
+    get:
+      summary: Get product by ID
+      description: Retrieve a specific product by its ID
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the product
+      responses:
+        '200':
+          description: Product details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Product not found
+        '500':
+          description: Internal server error
+
+    put:
+      summary: Update product
+      description: Update an existing product
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductRequest'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '400':
+          description: Bad request
+        '404':
+          description: Product not found
+        '500':
+          description: Internal server error
+
+    delete:
+      summary: Delete product
+      description: Delete a product from the catalog
+      tags:
+        - Products
+      parameters:
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: The unique identifier of the product
+      responses:
+        '204':
+          description: Product deleted successfully
+        '404':
+          description: Product not found
+        '500':
+          description: Internal server error
+
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the product
+        name:
+          type: string
+          description: Name of the product
+        description:
+          type: string
+          description: Detailed description of the product
+        price:
+          type: number
+          format: float
+          minimum: 0
+          description: Price of the product
+        currency:
+          type: string
+          enum: [USD, EUR, GBP]
+          description: Currency of the price
+        category:
+          type: string
+          description: Product category
+        inStock:
+          type: boolean
+          description: Whether the product is in stock
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the product
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was last updated
+      required:
+        - id
+        - name
+        - price
+        - currency
+        - inStock
+        - createdAt
+        - updatedAt
+
+    CreateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the product
+        description:
+          type: string
+          description: Detailed description of the product
+        price:
+          type: number
+          format: float
+          minimum: 0
+          description: Price of the product
+        currency:
+          type: string
+          enum: [USD, EUR, GBP]
+          description: Currency of the price
+        category:
+          type: string
+          description: Product category
+        inStock:
+          type: boolean
+          default: true
+          description: Whether the product is in stock
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the product
+      required:
+        - name
+        - price
+        - currency
+
+    UpdateProductRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the product
+        description:
+          type: string
+          description: Detailed description of the product
+        price:
+          type: number
+          format: float
+          minimum: 0
+          description: Price of the product
+        currency:
+          type: string
+          enum: [USD, EUR, GBP]
+          description: Currency of the price
+        category:
+          type: string
+          description: Product category
+        inStock:
+          type: boolean
+          description: Whether the product is in stock
+        tags:
+          type: array
+          items:
+            type: string
+          description: Tags associated with the product
