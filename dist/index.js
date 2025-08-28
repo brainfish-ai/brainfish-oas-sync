@@ -9629,7 +9629,12 @@ const uploadToBrainfish = (fileData, apiToken, catalogId, baseUrl = 'https://app
     
     // Create form data
     const form = new FormData()
-    form.append('file', processedContent, {
+    
+    // Convert string content to Buffer to ensure proper binary handling
+    const fileBuffer = Buffer.from(processedContent, 'utf8')
+    
+    // Use empty string as field name to match cURL --form =@file behavior
+    form.append('', fileBuffer, {
       filename: processedFileName,
       contentType: 'application/json'
     })
